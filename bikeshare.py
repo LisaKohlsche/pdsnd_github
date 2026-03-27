@@ -653,7 +653,12 @@ def get_user_stats(df, cities):
 
 
 def show_raw_data(df, cities):
-
+    """Asks the user if he wants to see raw data. If yes, displays the raw data for the first line, adding 5 new line each time the user wants to see additional raw data.
+    Args:
+        (dataframe) df - Pandas DataFrame with the city data
+        (str / list) cities - city / cities the user wants to compare data for       
+    """
+    
     raw_data = input("Do you want to see some of the raw data? (yes / no) ")
     raw_data = raw_data.strip().title()
     

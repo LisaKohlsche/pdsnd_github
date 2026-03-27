@@ -658,7 +658,7 @@ def show_raw_data(df, cities):
         (dataframe) df - Pandas DataFrame with the city data
         (str / list) cities - city / cities the user wants to compare data for       
     """
-    
+
     raw_data = input("Do you want to see some of the raw data? (yes / no) ")
     raw_data = raw_data.strip().title()
     
@@ -696,6 +696,10 @@ def show_raw_data(df, cities):
 
 
 def main():
+    """
+    Main function that asks the user if he wants to explore US bikeshare data. If yes, the function asks the user for which city / cities and time period(s) he would like to see the data and prints out different statistics according to the users wishes.     
+    """
+    
     restart = True
     
     while restart:

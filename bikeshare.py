@@ -236,22 +236,25 @@ def join_dfs(city_data, cities):
     
     df = pd.DataFrame(columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year", "City"])
     
-    if "Chicago" in cities:
-        df_chicago = pd.read_csv(city_data["Chicago"])
+    if "Chicago" in cities:  
+        df_chicago = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["Chicago"])
+        # df_chicago = pd.read_csv(city_data["Chicago"])
         df_chicago = df_chicago[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]]
         df_chicago["Trip Duration"] = df_chicago["Trip Duration"].astype(float) 
         df_chicago["City"] = "Chicago"
         df = pd.merge(df, df_chicago, how = "outer")
     
     if "New York City" in cities:
-        df_newyorkcity = pd.read_csv(city_data["New York City"])
+        df_newyorkcity = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["New York City"])
+        # df_newyorkcity = pd.read_csv(city_data["New York City"])
         df_newyorkcity = df_newyorkcity[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]]
         df_newyorkcity["Trip Duration"] = df_newyorkcity["Trip Duration"].astype(float)  
         df_newyorkcity["City"] = "New York City"   
         df = pd.merge(df, df_newyorkcity, how = "outer")
 
     if "Washington" in cities:
-        df_washington = pd.read_csv(city_data["Washington"])
+        df_washington = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["Washington"])  
+        # df_washington = pd.read_csv(city_data["Washington"])
         df_washington = df_washington[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]]
         df_washington["City"] = "Washington"
         df = pd.merge(df, df_washington, how = "outer")

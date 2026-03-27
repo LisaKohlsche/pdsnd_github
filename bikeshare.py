@@ -67,6 +67,7 @@ def get_units_of_interest(time_unit, allowed_values):
     # asks the user for which months resp. days he would like to filter the data for
     
     units_of_interest = []
+    available_values = allowed_values.copy()
     
     if number == max_number:
          units_of_interest = allowed_values
@@ -77,9 +78,9 @@ def get_units_of_interest(time_unit, allowed_values):
             while True:
                 unit_of_interest = input("\nWhich {}(s) would you like to look at? Please enter the {}. {}. ".format(time_unit, str(i), time_unit)) 
                 unit_of_interest = unit_of_interest.strip().title()
-                if unit_of_interest in allowed_values:
+                if unit_of_interest in available_values:
                     units_of_interest.append(unit_of_interest)
-                    allowed_values.remove(unit_of_interest)
+                    available_values.remove(unit_of_interest)
                     break
                 else:
                     print("Please enter a valid response. You can choose from the following {}s: {}".format(time_unit, allowed_values))

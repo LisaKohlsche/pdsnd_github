@@ -28,6 +28,14 @@ day_number_word = dict([(value, key) for key, value in day_word_number.items()])
 
 
 
+def print_seperator():
+    """ Prints a seperating line for better readability"""
+
+    print("\n")    
+    print('-'*40)
+    print("\n") 
+    return
+
 
 def get_units_of_interest(time_unit, allowed_values):
     """
@@ -67,6 +75,7 @@ def get_units_of_interest(time_unit, allowed_values):
     # asks the user for which months resp. days he would like to filter the data for
     
     units_of_interest = []
+    available_values = allowed_values.copy()
     
     if number == max_number:
          units_of_interest = allowed_values
@@ -77,9 +86,9 @@ def get_units_of_interest(time_unit, allowed_values):
             while True:
                 unit_of_interest = input("\nWhich {}(s) would you like to look at? Please enter the {}. {}. ".format(time_unit, str(i), time_unit)) 
                 unit_of_interest = unit_of_interest.strip().title()
-                if unit_of_interest in allowed_values:
+                if unit_of_interest in available_values:
                     units_of_interest.append(unit_of_interest)
-                    allowed_values.remove(unit_of_interest)
+                    available_values.remove(unit_of_interest)
                     break
                 else:
                     print("Please enter a valid response. You can choose from the following {}s: {}".format(time_unit, allowed_values))
@@ -212,9 +221,8 @@ def get_filters():
     else:
         days_of_interest = ["None"]  
         
-    print("\n")    
-    print('-'*40)
-    print("\n") 
+    print_seperator()
+
     return city, months_of_interest, days_of_interest
 
 
@@ -235,22 +243,25 @@ def join_dfs(city_data, cities):
     
     df = pd.DataFrame(columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year", "City"])
     
-    if "Chicago" in cities:
-        df_chicago = pd.read_csv(city_data["Chicago"])
+    if "Chicago" in cities:  
+        df_chicago = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["Chicago"])
+        # df_chicago = pd.read_csv(city_data["Chicago"])
         df_chicago = df_chicago[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]]
         df_chicago["Trip Duration"] = df_chicago["Trip Duration"].astype(float) 
         df_chicago["City"] = "Chicago"
         df = pd.merge(df, df_chicago, how = "outer")
     
     if "New York City" in cities:
-        df_newyorkcity = pd.read_csv(city_data["New York City"])
+        df_newyorkcity = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["New York City"])
+        # df_newyorkcity = pd.read_csv(city_data["New York City"])
         df_newyorkcity = df_newyorkcity[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]]
         df_newyorkcity["Trip Duration"] = df_newyorkcity["Trip Duration"].astype(float)  
         df_newyorkcity["City"] = "New York City"   
         df = pd.merge(df, df_newyorkcity, how = "outer")
 
     if "Washington" in cities:
-        df_washington = pd.read_csv(city_data["Washington"])
+        df_washington = pd.read_csv("I:/Users/Lisa/Udacity/Python/Chapter 8/Projekt/" + city_data["Washington"])  
+        # df_washington = pd.read_csv(city_data["Washington"])
         df_washington = df_washington[["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]]
         df_washington["City"] = "Washington"
         df = pd.merge(df, df_washington, how = "outer")
@@ -294,20 +305,18 @@ def load_data(city, months, days):
         df = df[df["Day of week"].isin(days)]     
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")    
-    print('-'*40)    
-    print("\n")    
+    print_seperator()  
  
     return df
 
 
 
-def get_frequencies(count, unit = None, matching_dict1 = None, matching_dict2 = None):
+def get_frequencies(count, unit = None):
     """
     Sorts the frequency counts to show data in a "natural" order (e. g. "Monday, Tuesday, Wednesday, ...", "January, Febraury, March, ...")
     Args:
         (pd.series) count - frequency count for a specific unit (months, days, ...)
-        (dict) matching_dict - matches for months and days the text description ("January", "February", ...) with the respective number (1, 2, ...) for sorting purposes
+        (str) unit - month, day or hour depending on which time unit frecuencies should be shown 
     Returns:
         (tuple) values - tuples of the values in the "natural" order
         (tuple) counts - frequencies matching the values
@@ -315,10 +324,18 @@ def get_frequencies(count, unit = None, matching_dict1 = None, matching_dict2 = 
     
     tuples = [tuple((x, y)) for x, y in count.items()]
     
-    if unit in ["month", "day"]:
+    if unit in ["Month", "Day"]:
+        if unit == "Month":
+            matching_dict1 = month_word_number
+            matching_dict2 = month_number_word
+        elif unit == "Day":
+            matching_dict1 = day_word_number
+            matching_dict2 = day_number_word           
+        
         tuples_temp = sorted([tuple((matching_dict1[element[0]], element[1])) for element in tuples])
         tuples = [tuple((matching_dict2[element[0]], element[1])) for element in tuples_temp]        
-    elif unit == "hour":   
+    
+    elif unit == "Hour":   
         tuples = sorted(tuples) 
      
     values, counts = zip(*tuples)   
@@ -335,53 +352,29 @@ def show_frequencies(df, unit):
         (str) unit - unit of analysis that has to be displayed         
     """
     
-    if unit == "Month":
-        count = df["Month"].value_counts()
-        values, counts = get_frequencies(count, "month", month_word_number, month_number_word)
-        
-        print("This is the number of rentals per month:")
-        for i in range(0, len(values)):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
+    column_map = {"Month": "Month", "Day": "Day of week", "Hour": "Hour"}
     
-    elif unit == "Day":
-        count = df["Day of week"].value_counts()
-        values, counts = get_frequencies(count, "day", day_word_number, day_number_word)
+    if unit in ["Month", "Day", "Hour"]:
+        unit_column = column_map[unit]
+        count = df[unit_column].value_counts()
+        values, counts = get_frequencies(count, unit)
         
-        print("This is the numbers of rentals per day:")
+        print("This is the number of rentals per {}".format(unit_column.lower()))
         for i in range(0, len(values)):
             print(values[i], ": ", counts[i])
-        print("\n\n")
-        
-    elif unit == "Hour":
-        count = df["Hour"].value_counts()
-        values, counts = get_frequencies(count, "hour")
-        
-        print("This is the number of rentals per hour:")
-        for i in range(0, len(values)):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
+        print("\n\n")        
 
-    elif unit == "Start Station":
-        count = df["Start Station"].value_counts()
+    elif unit in ["Start Station", "End Station"]:
+        count = df[unit].value_counts()
         values, counts = get_frequencies(count)
 
-        print("This is the number of rentals for the top 5 start stations:")
+        print("This is the number of rentals for the top 5 {}s:".format(unit.lower()))
         for i in range(0, 5):
             print(values[i], ": ", counts[i])
         print("\n\n")
-                
-    elif unit == "End Station":
-        count = df["End Station"].value_counts()
-        values, counts = get_frequencies(count)
 
-        print("This is the number of rentals for the top 5 end stations:")
-        for i in range(0, 5):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
     
-    return
-        
+    return        
         
 
 def time_stats_more_cities(df, cities, time_unit):
@@ -444,8 +437,9 @@ def time_stats(df, cities, months, days):
         print("Since you filtered the data only for one specific month ({}) no statistic for the most common month will be provided.".format(months[0]))
         print("Specifically in {} there were {} rentals.\n\n".format(months[0], len(df)))
     else:
-        most_common_month = df["Month"].mode()[0]
-        most_common_month_count = df["Month"].value_counts().max()
+        counts = df["Month"].value_counts()
+        most_common_month = counts.idxmax()
+        most_common_month_count = counts.max()
         print("The most common month is {} with {} rentals.\n\n".format(most_common_month, most_common_month_count))
         show_frequencies(df, "Month")
         
@@ -458,8 +452,9 @@ def time_stats(df, cities, months, days):
         print("Since you filtered the data only for one specific day ({}) no statistic for the most common day will be provided.".format(days[0]))
         print("Specifically on {} there were {} rentals.\n\n".format(days[0], len(df)))
     else:
-        most_common_day = df["Day of week"].mode()[0]
-        most_common_day_count = df["Day of week"].value_counts().max()
+        counts = df["Day of week"].value_counts()
+        most_common_day = counts.idxmax()
+        most_common_day_count = counts.max()
         print("The most common day of the week is {} with {} rentals.\n".format(most_common_day, most_common_day_count))
         show_frequencies(df, "Day")
 
@@ -469,8 +464,9 @@ def time_stats(df, cities, months, days):
 
     # display the most common start hour
     df["Hour"] = df["Start Time"].dt.hour
-    most_common_hour = df["Hour"].mode()[0]
-    most_common_hour_count = df["Hour"].value_counts().max()
+    counts = df["Hour"].value_counts()
+    most_common_hour = counts.idxmax()
+    most_common_hour_count = counts.max()
     print("The most common hour is {} with {} rentals.\n".format(most_common_hour, most_common_hour_count))
     show_frequencies(df, "Hour")
     
@@ -479,9 +475,7 @@ def time_stats(df, cities, months, days):
     
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -507,7 +501,7 @@ def station_stats(df, city):
     # display most commonly used end station
     most_common_end = df["End Station"].mode()[0]
     most_common_end_count = df["End Station"].value_counts().max()
-    print("The most common end start station is {} with {} rentals.\n".format(most_common_end, most_common_end_count))
+    print("The most common end station is {} with {} rentals.\n".format(most_common_end, most_common_end_count))
     show_frequencies(df, "End Station")
 
     # display most frequent combination of start station and end station trip
@@ -536,9 +530,7 @@ def get_station_stats(df, cities):
             station_stats(df_temp, city)       
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -586,9 +578,7 @@ def get_trip_duration_stats(df, cities):
             print("\n")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -610,13 +600,13 @@ def user_stats(df, city):
 
 
     # Display counts of gender
-    if city == "Chicago" or city == "New York City": 
+    if city in ["Chicago", "New York City"]: 
         print("\nDistribution of gender: ")
         print(df["Gender"].value_counts())
         print("\n")
 
     # Display earliest, most recent, and most common year of birth
-    if city == "Chicago" or city == "New York City": 
+    if city in ["Chicago", "New York City"]: 
         print("\nThe earliest birth year is: {}".format(int(df["Birth Year"].min())))
         print("The most recent birth year is: {}".format(int(df["Birth Year"].max())))
         print("The most common birth year is: {}".format(int(df["Birth Year"].mode()[0])))
@@ -644,9 +634,7 @@ def get_user_stats(df, cities):
             print("\n\n")
     
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -672,14 +660,13 @@ def show_raw_data(df, cities):
         index_max = 0
               
         while raw_data == "Yes":
-            
+            columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]        
             if isinstance(cities, list):
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year", "City"]
+                columns.extend(["Gender", "Birth Year", "City"])
             elif cities in ["Chicago", "New York City"]:
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]
-            elif cities == "Washington":
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]
-                            
+                columns.extend(["Gender", "Birth Year"])
+
+
             index_min = index_max
             index_max += 5
             print("Raw data: ")
@@ -704,8 +691,11 @@ def main():
     
     while restart:
         city, months, days = get_filters()
-        df = load_data(city, months, days)
+ 
+        if city == None and months == None and days == None:
+            break
 
+        df = load_data(city, months, days)
 
         time_stats(df, city, months, days)
         get_station_stats(df, city)

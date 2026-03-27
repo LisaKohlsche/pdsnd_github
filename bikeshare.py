@@ -311,12 +311,12 @@ def load_data(city, months, days):
 
 
 
-def get_frequencies(count, unit = None, matching_dict1 = None, matching_dict2 = None):
+def get_frequencies(count, unit = None):
     """
     Sorts the frequency counts to show data in a "natural" order (e. g. "Monday, Tuesday, Wednesday, ...", "January, Febraury, March, ...")
     Args:
         (pd.series) count - frequency count for a specific unit (months, days, ...)
-        (dict) matching_dict - matches for months and days the text description ("January", "February", ...) with the respective number (1, 2, ...) for sorting purposes
+        (str) unit - month, day or hour depending on which time unit frecuencies should be shown 
     Returns:
         (tuple) values - tuples of the values in the "natural" order
         (tuple) counts - frequencies matching the values
@@ -324,10 +324,18 @@ def get_frequencies(count, unit = None, matching_dict1 = None, matching_dict2 = 
     
     tuples = [tuple((x, y)) for x, y in count.items()]
     
-    if unit in ["month", "day"]:
+    if unit in ["Month", "Day"]:
+        if unit == "Month":
+            matching_dict1 = month_word_number
+            matching_dict2 = month_number_word
+        elif unit == "Day":
+            matching_dict1 = day_word_number
+            matching_dict2 = day_number_word           
+        
         tuples_temp = sorted([tuple((matching_dict1[element[0]], element[1])) for element in tuples])
         tuples = [tuple((matching_dict2[element[0]], element[1])) for element in tuples_temp]        
-    elif unit == "hour":   
+    
+    elif unit == "Hour":   
         tuples = sorted(tuples) 
      
     values, counts = zip(*tuples)   
@@ -344,53 +352,29 @@ def show_frequencies(df, unit):
         (str) unit - unit of analysis that has to be displayed         
     """
     
-    if unit == "Month":
-        count = df["Month"].value_counts()
-        values, counts = get_frequencies(count, "month", month_word_number, month_number_word)
-        
-        print("This is the number of rentals per month:")
-        for i in range(0, len(values)):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
+    column_map = {"Month": "Month", "Day": "Day of week", "Hour": "Hour"}
     
-    elif unit == "Day":
-        count = df["Day of week"].value_counts()
-        values, counts = get_frequencies(count, "day", day_word_number, day_number_word)
+    if unit in ["Month", "Day", "Hour"]:
+        unit_column = column_map[unit]
+        count = df[unit_column].value_counts()
+        values, counts = get_frequencies(count, unit)
         
-        print("This is the numbers of rentals per day:")
+        print("This is the number of rentals per {}".format(unit_column.lower()))
         for i in range(0, len(values)):
             print(values[i], ": ", counts[i])
-        print("\n\n")
-        
-    elif unit == "Hour":
-        count = df["Hour"].value_counts()
-        values, counts = get_frequencies(count, "hour")
-        
-        print("This is the number of rentals per hour:")
-        for i in range(0, len(values)):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
+        print("\n\n")        
 
-    elif unit == "Start Station":
-        count = df["Start Station"].value_counts()
+    elif unit in ["Start Station", "End Station"]:
+        count = df[unit].value_counts()
         values, counts = get_frequencies(count)
 
-        print("This is the number of rentals for the top 5 start stations:")
+        print("This is the number of rentals for the top 5 {}s:".format(unit.lower()))
         for i in range(0, 5):
             print(values[i], ": ", counts[i])
         print("\n\n")
-                
-    elif unit == "End Station":
-        count = df["End Station"].value_counts()
-        values, counts = get_frequencies(count)
 
-        print("This is the number of rentals for the top 5 end stations:")
-        for i in range(0, 5):
-            print(values[i], ": ", counts[i])
-        print("\n\n")
     
-    return
-        
+    return        
         
 
 def time_stats_more_cities(df, cities, time_unit):

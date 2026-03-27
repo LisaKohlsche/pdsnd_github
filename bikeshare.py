@@ -28,6 +28,14 @@ day_number_word = dict([(value, key) for key, value in day_word_number.items()])
 
 
 
+def print_seperator():
+    """ Prints a seperating line for better readability"""
+
+    print("\n")    
+    print('-'*40)
+    print("\n") 
+    return
+
 
 def get_units_of_interest(time_unit, allowed_values):
     """
@@ -213,9 +221,8 @@ def get_filters():
     else:
         days_of_interest = ["None"]  
         
-    print("\n")    
-    print('-'*40)
-    print("\n") 
+    print_seperator()
+
     return city, months_of_interest, days_of_interest
 
 
@@ -298,9 +305,7 @@ def load_data(city, months, days):
         df = df[df["Day of week"].isin(days)]     
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")    
-    print('-'*40)    
-    print("\n")    
+    print_seperator()  
  
     return df
 
@@ -483,9 +488,7 @@ def time_stats(df, cities, months, days):
     
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -540,9 +543,7 @@ def get_station_stats(df, cities):
             station_stats(df_temp, city)       
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -590,9 +591,7 @@ def get_trip_duration_stats(df, cities):
             print("\n")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 
@@ -648,9 +647,7 @@ def get_user_stats(df, cities):
             print("\n\n")
     
     print("\nThis took %s seconds." % (time.time() - start_time))
-    print("\n")
-    print('-'*40)
-    print("\n")
+    print_seperator()
     
     return
 

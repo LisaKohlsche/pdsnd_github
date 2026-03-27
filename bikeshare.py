@@ -699,8 +699,11 @@ def main():
     
     while restart:
         city, months, days = get_filters()
-        df = load_data(city, months, days)
+ 
+        if city == None and months == None and days == None:
+            break
 
+        df = load_data(city, months, days)
 
         time_stats(df, city, months, days)
         get_station_stats(df, city)

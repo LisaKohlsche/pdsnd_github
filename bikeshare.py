@@ -655,14 +655,13 @@ def show_raw_data(df, cities):
         index_max = 0
               
         while raw_data == "Yes":
-            
+            columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]        
             if isinstance(cities, list):
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year", "City"]
+                columns.extend(["Gender", "Birth Year", "City"])
             elif cities in ["Chicago", "New York City"]:
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type", "Gender", "Birth Year"]
-            elif cities == "Washington":
-                columns = ["Start Time", "End Time", "Trip Duration", "Start Station", "End Station", "User Type"]
-                            
+                columns.extend(["Gender", "Birth Year"])
+
+
             index_min = index_max
             index_max += 5
             print("Raw data: ")

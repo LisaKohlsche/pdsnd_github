@@ -453,8 +453,9 @@ def time_stats(df, cities, months, days):
         print("Since you filtered the data only for one specific month ({}) no statistic for the most common month will be provided.".format(months[0]))
         print("Specifically in {} there were {} rentals.\n\n".format(months[0], len(df)))
     else:
-        most_common_month = df["Month"].mode()[0]
-        most_common_month_count = df["Month"].value_counts().max()
+        counts = df["Month"].value_counts()
+        most_common_month = counts.idxmax()
+        most_common_month_count = counts.max()
         print("The most common month is {} with {} rentals.\n\n".format(most_common_month, most_common_month_count))
         show_frequencies(df, "Month")
         
@@ -467,8 +468,9 @@ def time_stats(df, cities, months, days):
         print("Since you filtered the data only for one specific day ({}) no statistic for the most common day will be provided.".format(days[0]))
         print("Specifically on {} there were {} rentals.\n\n".format(days[0], len(df)))
     else:
-        most_common_day = df["Day of week"].mode()[0]
-        most_common_day_count = df["Day of week"].value_counts().max()
+        counts = df["Day of week"].value_counts()
+        most_common_day = counts.idxmax()
+        most_common_day_count = counts.max()
         print("The most common day of the week is {} with {} rentals.\n".format(most_common_day, most_common_day_count))
         show_frequencies(df, "Day")
 
@@ -478,8 +480,9 @@ def time_stats(df, cities, months, days):
 
     # display the most common start hour
     df["Hour"] = df["Start Time"].dt.hour
-    most_common_hour = df["Hour"].mode()[0]
-    most_common_hour_count = df["Hour"].value_counts().max()
+    counts = df["Hour"].value_counts()
+    most_common_hour = counts.idxmax()
+    most_common_hour_count = counts.max()
     print("The most common hour is {} with {} rentals.\n".format(most_common_hour, most_common_hour_count))
     show_frequencies(df, "Hour")
     

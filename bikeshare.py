@@ -613,13 +613,13 @@ def user_stats(df, city):
 
 
     # Display counts of gender
-    if city == "Chicago" or city == "New York City": 
+    if city in ["Chicago", "New York City"]: 
         print("\nDistribution of gender: ")
         print(df["Gender"].value_counts())
         print("\n")
 
     # Display earliest, most recent, and most common year of birth
-    if city == "Chicago" or city == "New York City": 
+    if city in ["Chicago", "New York City"]: 
         print("\nThe earliest birth year is: {}".format(int(df["Birth Year"].min())))
         print("The most recent birth year is: {}".format(int(df["Birth Year"].max())))
         print("The most common birth year is: {}".format(int(df["Birth Year"].mode()[0])))

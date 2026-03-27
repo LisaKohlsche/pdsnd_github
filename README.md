@@ -7,10 +7,12 @@
 Exploring US bikeshare data
 
 ### Description
-Describe what your project is about and what it does
+The project lets users interactively explore bikeshare data for Chicago, New York City and Washington. The user can get statistics on e.g. time of rental, start and end station and rental duration for different time periods.
 
 ### Files used
-Include the files used
+chicago.csv
+new_york_city.csv
+washington.csv
 
 ### Credits
 It's important to give proper credit. Add links to any repo that inspired you or blogposts you consulted.
